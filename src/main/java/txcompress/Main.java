@@ -18,15 +18,35 @@ public class Main {
         };
 
         for(CompressionAlgo algo : algos)
-            System.out.println("compression rate of '" + algo.getName() + "' is " + calcCompressionRate(algo, data));
+            System.out.println(calculateMetrics(algo, data));
     }
 
-    private static double calcCompressionRate(CompressionAlgo algo, TransactionData data) {
+    private static Result calculateMetrics(CompressionAlgo algo, TransactionData data) {
+        long startTime = System.currentTimeMillis();
         int compressedSize = 0, uncompressedSize = 0;
         for(String trytes : data.getTransactions()) {
             uncompressedSize += trytes.length();
             compressedSize += algo.compressedSize(trytes);
         }
-        return (double)uncompressedSize / compressedSize;
+        return new Result(algo.getName(),  (double) uncompressedSize / compressedSize, System.currentTimeMillis() - startTime);
+    }
+
+    static class Result {
+
+        String name;
+        double compressionRatio;
+        long time;
+
+        public Result(String name, double compressionRatio, long time) {
+            this.name = name;
+            this.compressionRatio = compressionRatio;
+            this.time = time;
+        }
+
+        @Override
+        public String toString() {
+            return name + " time: "+time + "ms, compression ratio: " +compressionRatio ;
+        }
+
     }
 }

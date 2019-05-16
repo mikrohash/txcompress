@@ -16,13 +16,13 @@ public class LZ4Algo extends CompressionAlgo {
 
     @Override
     protected CompressionResult compress() {
-        byte[] trytesOfByteString = getBytesOfTryteString();
-        decompressedLength = trytesOfByteString.length;
+        byte[] bytesOfTryteString = getBytesOfTryteString();
+        decompressedLength = bytesOfTryteString.length;
 
         LZ4Compressor compressor = factory.fastCompressor();
         int maxCompressedLength = compressor.maxCompressedLength(decompressedLength);
         byte[] compressed = new byte[maxCompressedLength];
-        compressor.compress(trytesOfByteString, 0, decompressedLength, compressed, 0, maxCompressedLength);
+        compressor.compress(bytesOfTryteString, 0, decompressedLength, compressed, 0, maxCompressedLength);
 
         return new CompressionResult(compressed);
     }

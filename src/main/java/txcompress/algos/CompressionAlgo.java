@@ -1,28 +1,28 @@
 package txcompress.algos;
 
+import txcompress.utils.Trytes;
+
 public abstract class CompressionAlgo {
 
     public final int compressedSize(String trytes) {
-        String compressed = compress(trytes);
-        String decompressed = decompress(compressed);
-        /*
-        System.out.println();
-        System.out.println(compressed);
-        System.out.println(decompressed);
-        */
-        if(!trytes.equals(decompressed)) {
+
+        byte[] compressed = compress(Trytes.toBytes(trytes));
+        byte[] decompressed = decompress(compressed);
+        String result = Trytes.fromBytes(decompressed, 0 , decompressed.length);
+
+        if(!trytes.equals(result)) {
             System.err.println("original:     " + trytes);
-            System.err.println("compressed:   " + compressed);
-            System.err.println("decompressed: " + decompressed);
+            System.err.println("decompressed: " + result);
             throw new IllegalStateException("Decompression failed!");
         }
 
-        return compressed.length();
+        return compressed.length;
+
     }
 
     public abstract String getName();
 
-    protected abstract String compress(String trytes);
+    protected abstract byte[] compress(byte[] bytes);
+    protected abstract byte[] decompress(byte[] compressedBytes);
 
-    protected abstract String decompress(String compressedTrytes);
 }

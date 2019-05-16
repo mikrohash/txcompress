@@ -1,6 +1,7 @@
 package txcompress;
 
 import txcompress.algos.*;
+import txcompress.utils.Trytes;
 
 import java.io.File;
 
@@ -11,10 +12,11 @@ public class Main {
         TransactionData data = new TransactionData(new File("src/main/resources/tx_trytes.txt"));
 
         CompressionAlgo[] algos = new CompressionAlgo[] {
-                new RepeatTryteAlgo(),
-                new Repeat9Algo(),
-                new Trim9Algo(),
-                new LZ4Algo()
+                //new RepeatTryteAlgo(),
+                //new Repeat9Algo(),
+                //new Trim9Algo(),
+                new LZ4Algo(),
+                new FastPFOR()
         };
 
         for(CompressionAlgo algo : algos)
@@ -22,13 +24,13 @@ public class Main {
     }
 
     private static Result calculateMetrics(CompressionAlgo algo, TransactionData data) {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         int compressedSize = 0, uncompressedSize = 0;
         for(String trytes : data.getTransactions()) {
-            uncompressedSize += trytes.length();
+            uncompressedSize += Trytes.toBytes(trytes).length;
             compressedSize += algo.compressedSize(trytes);
         }
-        return new Result(algo.getName(),  (double) uncompressedSize / compressedSize, System.currentTimeMillis() - startTime);
+        return new Result(algo.getName(),  (double) uncompressedSize / compressedSize, (System.nanoTime() - startTime) / 10);
     }
 
     static class Result {
@@ -45,7 +47,7 @@ public class Main {
 
         @Override
         public String toString() {
-            return name + " time: "+time + "ms, compression ratio: " +compressionRatio ;
+            return name + " time: "+time + "ns , compression ratio: " +compressionRatio ;
         }
 
     }

@@ -10,16 +10,18 @@ public class RepeatTryteAlgo extends RepeatAlgo {
     }
 
     @Override
-    protected String compress(String trytes) {
+    protected CompressionResult compress() {
+        String trytes = getTryteString();
         for(int i = 0; i < TRYTES.length(); i++)
             trytes = compress(TRYTES.charAt(i)+"", trytes);
-        return trytes;
+        return new CompressionResult(trytes);
     }
 
     @Override
-    protected String decompress(String compressedTrytes) {
+    protected DecompressionResult decompress(CompressionResult compressionResult) {
+        String compressedTrytes = compressionResult.getTrytes();
         for(int i = 0; i < TRYTES.length(); i++)
             compressedTrytes = decompress(TRYTES.charAt(TRYTES.length()-1-i)+"", compressedTrytes);
-        return compressedTrytes;
+        return new DecompressionResult(compressedTrytes);
     }
 }

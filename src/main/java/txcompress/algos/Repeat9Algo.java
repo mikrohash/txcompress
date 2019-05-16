@@ -8,12 +8,12 @@ public class Repeat9Algo extends RepeatAlgo {
     }
 
     @Override
-    protected String compress(String trytes) {
-        return compress("9", trytes);
+    protected CompressionResult compress() {
+        return new CompressionResult(compress("9", getTryteString()));
     }
 
     @Override
-    protected String decompress(String compressedTrytes) {
-        return decompress("9", compressedTrytes);
+    protected DecompressionResult decompress(CompressionResult compressionResult) {
+        return new DecompressionResult(decompress("9", compressionResult.getTrytes()));
     }
 }

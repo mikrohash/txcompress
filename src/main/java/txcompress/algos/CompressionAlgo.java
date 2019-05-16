@@ -1,28 +1,59 @@
 package txcompress.algos;
 
+import txcompress.utils.Trytes;
+
 public abstract class CompressionAlgo {
 
-    public final int compressedSize(String trytes) {
-        String compressed = compress(trytes);
-        String decompressed = decompress(compressed);
-        /*
-        System.out.println();
-        System.out.println(compressed);
-        System.out.println(decompressed);
-        */
-        if(!trytes.equals(decompressed)) {
-            System.err.println("original:     " + trytes);
-            System.err.println("compressed:   " + compressed);
-            System.err.println("decompressed: " + decompressed);
+    private String tryteString;
+    private byte[] bytesOfTryteString;
+
+    private CompressionResult compressionResult;
+    private DecompressionResult decompressionResult;
+
+    public void initialize(String trytes) {
+        this.tryteString = trytes;
+        bytesOfTryteString = Trytes.toBytes(trytes);
+        compressionResult = null;
+        decompressionResult = null;
+    }
+
+    public void run() {
+        compressionResult = compress();
+        decompressionResult = decompress(compressionResult);
+    }
+
+    public void validate() {
+
+        String decompressedTrytes = decompressionResult.getTrytes();
+        if(decompressionResult.getBytes() != null)
+            decompressedTrytes = Trytes.fromBytes(decompressionResult.getBytes(), 0 , decompressionResult.getBytes().length);
+
+        if(!tryteString.equals(decompressedTrytes)) {
+            System.err.println("original:     " + tryteString);
+            System.err.println("decompressed: " + decompressedTrytes);
             throw new IllegalStateException("Decompression failed!");
         }
 
-        return compressed.length();
+    }
+
+    public int getDecompressedSize() {
+        return decompressionResult.getSize();
+    }
+
+    public int getCompressedSize() {
+        return compressionResult.getSize();
     }
 
     public abstract String getName();
+    protected abstract CompressionResult compress();
+    protected abstract DecompressionResult decompress(CompressionResult compressionResult);
 
-    protected abstract String compress(String trytes);
+    protected String getTryteString(){
+        return new String(tryteString);
+    }
 
-    protected abstract String decompress(String compressedTrytes);
+    protected byte[] getBytesOfTryteString(){
+        return bytesOfTryteString.clone();
+    }
+
 }

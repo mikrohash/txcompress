@@ -12,41 +12,56 @@ public class Main {
 
         CompressionAlgo[] algos = new CompressionAlgo[] {
                 new RepeatTryteAlgo(),
+                new FastPFOR(),
                 new Repeat9Algo(),
                 new Trim9Algo(),
-                new LZ4Algo()
+                new LZ4Algo(),
         };
 
         for(CompressionAlgo algo : algos)
-            System.out.println(calculateMetrics(algo, data));
+            System.out.println(run(algo, data));
     }
 
-    private static Result calculateMetrics(CompressionAlgo algo, TransactionData data) {
-        long startTime = System.currentTimeMillis();
+    private static Metric run(CompressionAlgo algo, TransactionData data) {
+
         int compressedSize = 0, uncompressedSize = 0;
+        long duration = 0;
+
         for(String trytes : data.getTransactions()) {
-            uncompressedSize += trytes.length();
-            compressedSize += algo.compressedSize(trytes);
+
+            algo.initialize(trytes);
+            long startTime = System.currentTimeMillis();
+            algo.run();
+            long endTime = System.currentTimeMillis();
+            algo.validate();
+
+            uncompressedSize += algo.getDecompressedSize();
+            compressedSize += algo.getCompressedSize();
+            duration += endTime - startTime;
+
         }
-        return new Result(algo.getName(),  (double) uncompressedSize / compressedSize, System.currentTimeMillis() - startTime);
+
+        double compressionRatio = (double) uncompressedSize / compressedSize;
+        return new Metric(algo.getName(),  compressionRatio, duration);
     }
 
-    static class Result {
+    static class Metric {
 
-        String name;
-        double compressionRatio;
-        long time;
+        private String name;
+        private double compressionRatio;
+        private long duration;
 
-        public Result(String name, double compressionRatio, long time) {
+        public Metric(String name, double compressionRatio, long duration) {
             this.name = name;
             this.compressionRatio = compressionRatio;
-            this.time = time;
+            this.duration = duration;
         }
 
         @Override
         public String toString() {
-            return name + " time: "+time + "ms, compression ratio: " +compressionRatio ;
+            return name + ", "+duration + "ns, ratio: " +compressionRatio;
         }
 
     }
+
 }

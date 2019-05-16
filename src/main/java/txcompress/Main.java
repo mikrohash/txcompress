@@ -1,9 +1,6 @@
 package txcompress;
 
-import txcompress.algos.CompressionAlgo;
-import txcompress.algos.Repeat9Algo;
-import txcompress.algos.RepeatTryteAlgo;
-import txcompress.algos.Trim9Algo;
+import txcompress.algos.*;
 
 import java.io.File;
 
@@ -17,6 +14,7 @@ public class Main {
                 new RepeatTryteAlgo(),
                 new Repeat9Algo(),
                 new Trim9Algo(),
+                new LZ4Algo()
         };
 
         for(CompressionAlgo algo : algos)

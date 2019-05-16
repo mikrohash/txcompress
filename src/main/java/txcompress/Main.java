@@ -1,0 +1,34 @@
+package txcompress;
+
+import txcompress.algos.CompressionAlgo;
+import txcompress.algos.Repeat9Algo;
+import txcompress.algos.RepeatTryteAlgo;
+import txcompress.algos.Trim9Algo;
+
+import java.io.File;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        TransactionData data = new TransactionData(new File("src/main/resources/tx_trytes.txt"));
+
+        CompressionAlgo[] algos = new CompressionAlgo[] {
+                new RepeatTryteAlgo(),
+                new Repeat9Algo(),
+                new Trim9Algo(),
+        };
+
+        for(CompressionAlgo algo : algos)
+            System.out.println("compression rate of '" + algo.getName() + "' is " + calcCompressionRate(algo, data));
+    }
+
+    private static double calcCompressionRate(CompressionAlgo algo, TransactionData data) {
+        int compressedSize = 0, uncompressedSize = 0;
+        for(String trytes : data.getTransactions()) {
+            uncompressedSize += trytes.length();
+            compressedSize += algo.compressedSize(trytes);
+        }
+        return (double)uncompressedSize / compressedSize;
+    }
+}

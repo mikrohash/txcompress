@@ -9,7 +9,11 @@ public class Trim9Algo extends CompressionAlgo {
 
     @Override
     protected CompressionResult compress() {
-        return new CompressionResult(getTryteString().replaceAll("^9*", ""));
+        char[] trytes = getTryteString().toCharArray();
+        int i = 0;
+        while (trytes[i++] == '9');
+        CompressionResult result = new CompressionResult(getTryteString().substring(i-1));
+        return result;
     }
 
     @Override

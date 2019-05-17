@@ -17,8 +17,11 @@ public abstract class CompressionAlgo {
         decompressionResult = null;
     }
 
-    public void run() {
+    public void runCompression() {
         compressionResult = compress();
+    }
+
+    public void runDecompression() {
         decompressionResult = decompress(compressionResult);
     }
 

@@ -1,6 +1,10 @@
 package txcompress.algos;
 
+import java.util.Arrays;
+
 public class Trim9Algo extends CompressionAlgo {
+
+    private static char[] nullTx = "9".repeat(2673).toCharArray();
 
     @Override
     public String getName() {
@@ -20,17 +24,11 @@ public class Trim9Algo extends CompressionAlgo {
     protected DecompressionResult decompress(CompressionResult compressionResult) {
 
         char[] buffer = new char[2673];
+        System.arraycopy(nullTx, 0, buffer, 0, trimPos);
+
         char[] trytes = compressionResult.getTrytes().toCharArray();
-
-        // left pad 9's
         int trimPos = 2673 - trytes.length;
-        for(int i = 0; i < trimPos; i++)
-            buffer[i] = '9';
-
-        // fill with rest
-        for(int i = 0; i < trytes.length; i++) {
-            buffer[trimPos+i] = trytes[i];
-        }
+        System.arraycopy(trytes, 0, buffer, trimPos, trytes.length);
 
         return new DecompressionResult(new String(buffer));
     }

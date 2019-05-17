@@ -4,6 +4,8 @@ import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
 
+import java.util.Arrays;
+
 public class LZ4Algo extends CompressionAlgo {
 
     private LZ4Factory factory = LZ4Factory.fastestInstance();
@@ -22,9 +24,11 @@ public class LZ4Algo extends CompressionAlgo {
         LZ4Compressor compressor = factory.fastCompressor();
         int maxCompressedLength = compressor.maxCompressedLength(decompressedLength);
         byte[] compressed = new byte[maxCompressedLength];
-        compressor.compress(bytesOfTryteString, 0, decompressedLength, compressed, 0, maxCompressedLength);
+        int compressedLength = compressor.compress(bytesOfTryteString, 0, decompressedLength, compressed, 0, maxCompressedLength);
 
-        return new CompressionResult(compressed);
+        byte[] result = Arrays.copyOfRange(compressed, 0, compressedLength);
+        return new CompressionResult(result);
+
     }
 
     @Override

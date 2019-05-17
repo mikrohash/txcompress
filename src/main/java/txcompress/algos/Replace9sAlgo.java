@@ -9,7 +9,7 @@ public class Replace9sAlgo extends CompressionAlgo {
 
     @Override
     public String getName() {
-        return "Replace9sAlgo";
+        return "Replace9s";
     }
 
     @Override

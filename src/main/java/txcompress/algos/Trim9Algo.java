@@ -18,9 +18,20 @@ public class Trim9Algo extends CompressionAlgo {
 
     @Override
     protected DecompressionResult decompress(CompressionResult compressionResult) {
-        char[] leftPad = new char[2673 - compressionResult.getTrytes().length()];
-        for(int i = 0; i < leftPad.length; i++)
-            leftPad[i] = '9';
-        return new DecompressionResult(new String(leftPad) + compressionResult.getTrytes());
+
+        char[] buffer = new char[2673];
+        char[] trytes = compressionResult.getTrytes().toCharArray();
+
+        // left pad 9's
+        int trimPos = 2673 - trytes.length;
+        for(int i = 0; i < trimPos; i++)
+            buffer[i] = '9';
+
+        // fill with rest
+        for(int i = 0; i < trytes.length; i++) {
+            buffer[trimPos+i] = trytes[i];
+        }
+
+        return new DecompressionResult(new String(buffer));
     }
 }

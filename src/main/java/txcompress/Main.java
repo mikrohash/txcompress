@@ -16,6 +16,7 @@ public class Main {
                 new Repeat9Algo(),
                 new Trim9Algo(),
                 new LZ4Algo(),
+                new FieldTrim9Algo(),
         };
 
         for(CompressionAlgo algo : algos)

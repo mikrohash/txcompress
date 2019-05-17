@@ -1,6 +1,7 @@
 package txcompress;
 
 import txcompress.algos.*;
+import txcompress.utils.StringUtils;
 
 import java.io.File;
 
@@ -11,12 +12,13 @@ public class Main {
         TransactionData data = new TransactionData(new File("src/main/resources/tx_trytes.txt"));
 
         CompressionAlgo[] algos = new CompressionAlgo[] {
-                new RepeatTryteAlgo(),
+                //new RepeatTryteAlgo(),
+                //new FieldTrim9Algo(),
                 new FastPFOR(),
                 new Repeat9Algo(),
                 new Trim9Algo(),
                 new LZ4Algo(),
-                new FieldTrim9Algo(),
+                new Replace9sAlgo()
         };
 
         for(CompressionAlgo algo : algos)
@@ -74,11 +76,12 @@ public class Main {
         }
 
         private static String padLeft(String string, int length) {
-            return " ".repeat(length-string.length()) + string;
+            return StringUtils.repeat(" ", length-string.length()) + string;
         }
 
         private static String padRight(String string, int length) {
-            return string + " ".repeat(length-string.length());
+            return string + StringUtils.repeat(" ", length-string.length());
         }
+
     }
 }

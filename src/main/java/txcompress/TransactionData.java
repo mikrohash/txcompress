@@ -14,10 +14,20 @@ public class TransactionData {
     public TransactionData(File file) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
+
+            int i = 0;
             String line;
-            while ((line = reader.readLine()) != null) {
+
+            while((line = reader.readLine()) != null && i < 50000) {
+
+                if(line.length() != 2673)
+                    line = line.substring(82);
                 txTrytes.add(line);
+
+                i++;
+
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -26,4 +36,5 @@ public class TransactionData {
     public Set<String> getTransactions() {
         return txTrytes;
     }
+
 }

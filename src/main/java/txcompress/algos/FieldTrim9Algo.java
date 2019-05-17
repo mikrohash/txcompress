@@ -9,7 +9,7 @@ public class FieldTrim9Algo extends CompressionAlgo {
 
     @Override
     public String getName() {
-        return "Trim-9";
+        return "FieldTrim9Algo";
     }
 
     @Override

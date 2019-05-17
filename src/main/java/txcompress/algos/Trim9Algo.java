@@ -1,8 +1,10 @@
 package txcompress.algos;
 
+import txcompress.utils.StringUtils;
+
 public class Trim9Algo extends CompressionAlgo {
 
-    private static char[] nullTx = "9".repeat(2673).toCharArray();
+    private static char[] nullTx = StringUtils.repeat("9",2673).toCharArray();
     private final  char[] buffer = new char[2673];
 
     @Override

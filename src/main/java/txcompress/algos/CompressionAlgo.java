@@ -34,7 +34,7 @@ public abstract class CompressionAlgo {
         if(!tryteString.equals(decompressedTrytes)) {
             System.err.println("original:     " + tryteString);
             System.err.println("decompressed: " + decompressedTrytes);
-            throw new IllegalStateException("Decompression failed!");
+            throw new IllegalStateException(getName()+": decompression failed!");
         }
 
     }

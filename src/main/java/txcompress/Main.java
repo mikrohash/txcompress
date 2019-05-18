@@ -12,8 +12,8 @@ public class Main {
         TransactionData data = new TransactionData(new File("src/main/resources/tx_trytes.txt"));
 
         CompressionAlgo[] algos = new CompressionAlgo[] {
-                //new RepeatTryteAlgo(),
-                //new FieldTrim9Algo(),
+                new RepeatTryteAlgo(),
+                new FieldTrim9Algo(),
                 new FastPFOR(),
                 new Repeat9Algo(),
                 new Trim9Algo(),

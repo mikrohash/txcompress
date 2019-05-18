@@ -2,9 +2,10 @@ package txcompress.algos;
 
 public class FieldTrim9Algo extends CompressionAlgo {
 
-    private final byte[] txBuffer = new byte[2673/3*2];
+    private final byte[] compressBuffer = new byte[2673/3*2+Field.values().length];
+    private final byte[] decompressBuffer = new byte[2673/3*2];
     private final byte[] nullTx = new byte[2673/3*2];
-    private static final byte DELIMITER_BYTE = (byte)255;
+    private static final byte DELIMITER_BYTE = (byte)-1;
     private static final byte NULL_BYTE = (byte)0;
 
     @Override
@@ -18,23 +19,27 @@ public class FieldTrim9Algo extends CompressionAlgo {
         int outputWriteOffset = 0;
 
         for(Field field : Field.values()) {
-            int trimPos;
-            for(trimPos = field.byteLength-1; trimPos > 1 && input[field.byteOffset+field.byteLength-trimPos] == NULL_BYTE && input[field.byteOffset+field.byteLength-trimPos-1] == NULL_BYTE; trimPos-=2);
-            System.arraycopy(input, field.byteOffset, txBuffer, outputWriteOffset, trimPos);
-            txBuffer[outputWriteOffset] = DELIMITER_BYTE;
-            outputWriteOffset += trimPos+1;
-            System.out.println("trimmed away " + (field.byteLength-trimPos-1) + " from " + field.name());
+            int fielsdLastByte = field.byteOffset + field.byteLength - 1;
+            int trimmedBytes = 0;
+            while (fielsdLastByte-trimmedBytes > 0 && input[fielsdLastByte-trimmedBytes] == NULL_BYTE && input[fielsdLastByte-trimmedBytes-1] == NULL_BYTE)
+                trimmedBytes += 2;
+
+            int keptBytes = field.byteLength-trimmedBytes;
+            System.arraycopy(input, field.byteOffset, compressBuffer, outputWriteOffset, keptBytes);
+            outputWriteOffset += keptBytes;
+            compressBuffer[outputWriteOffset] = DELIMITER_BYTE;
+            outputWriteOffset ++;
         }
 
-        byte[] output = new byte[outputWriteOffset-1];
-        System.arraycopy(txBuffer, 0, output, 0, output.length);
+        byte[] output = new byte[outputWriteOffset];
+        System.arraycopy(compressBuffer, 0, output, 0, output.length);
         return new CompressionResult(output);
     }
 
     @Override
     protected DecompressionResult decompress(CompressionResult compressionResult) {
         byte[] compressed = compressionResult.getBytes();
-        System.arraycopy(nullTx, 0, txBuffer, 0, txBuffer.length);
+        System.arraycopy(nullTx, 0, decompressBuffer, 0, decompressBuffer.length);
 
         Field[] fields = Field.values();
         int fieldIndex = 0;
@@ -43,13 +48,13 @@ public class FieldTrim9Algo extends CompressionAlgo {
         for(int i = 0; i < compressed.length; i++) {
             if(compressed[i] == DELIMITER_BYTE) {
                 Field field = fields[fieldIndex];
-                System.arraycopy(compressed, compressedFieldOffset, txBuffer, field.byteOffset, i-compressedFieldOffset);
+                System.arraycopy(compressed, compressedFieldOffset, decompressBuffer, field.byteOffset, i-compressedFieldOffset);
                 fieldIndex++;
                 compressedFieldOffset = i+1;
             }
         }
 
-        return new DecompressionResult(txBuffer);
+        return new DecompressionResult(decompressBuffer);
     }
 
     public enum Field {
